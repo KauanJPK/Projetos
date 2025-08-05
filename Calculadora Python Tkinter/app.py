@@ -21,17 +21,17 @@ class App:
             "7", "8", "9",
             "0", "/",
             "*", "+", "-",
-            "C", "="
+             "=", "C"
         ]
         for i, valor in enumerate(botoes):
             row = i // 4
             col = i % 4
-            if valor == "C":
-                btn = Button(self.numeros_Frame, text=valor, width=5, height=2, fg="white", background="red")
-                btn.bind('<Button-1>', self.apagar)
             if valor == "=":
                 btn = Button(self.numeros_Frame, text=valor, width=5, height=2, bg="green", fg="white")
                 btn.bind('<Button-1>', self.calcular)
+            elif valor == "C":
+                btn = Button(self.numeros_Frame, text=valor, width=5, height=2, fg="white", bg="red")
+                btn.bind('<Button-1>', self.apagar)
             else:
                 btn = Button(self.numeros_Frame, text=valor, width=5, height=2, bg="#E027F5", fg="white")
                 btn.bind('<Button-1>', self.adicionar)
@@ -45,17 +45,18 @@ class App:
             
     def adicionar(self, event):
         texto_atual = self.ecra['text']
-        novo_texto = texto_atual + event.widget['text']
+        novo_texto = str(texto_atual) + event.widget['text']
         self.ecra['text'] = novo_texto
 
     def apagar(self, event):
-        self.ecra['text'] = ''
+        self.texto = ""
+        self.ecra['text'] = self.texto
 
     def calcular(self, event):
         calculo = self.ecra['text']
-        if "/" or "*" or "+" or "-" in calculo:
+        if any(op in calculo for op in ['/', '*', '+', '-']):
             calculado = eval(calculo)
-            self.ecra['text'] = calculado
+            self.ecra['text'] = str(calculado)
 
 root = Tk()
 App(root)
