@@ -1,7 +1,8 @@
 from tkinter import *
+import math
 
 
-class App:
+class CalculadoraTk:
     def __init__(self, master=None):
 
         self.widget1 = Frame(master, bg="#EF8FFA")
@@ -20,9 +21,9 @@ class App:
             "1", "2", "3",
             "4", "5", "6",
             "7", "8", "9",
-            "0", "/",
-            "*", "+", "-",
-             "=", "C"
+            "0", "/","X",
+            "+", "-","%",
+            "√", "=", "C",
         ]
         for i, valor in enumerate(botoes):
             row = i // 4
@@ -36,8 +37,12 @@ class App:
             else:
                 btn = Button(self.numeros_Frame, text=valor, width=5, height=2, bg="#E027F5", fg="white")
                 btn.bind('<Button-1>', self.adicionar)
-            btn.grid(row=row, column=col, padx=5, pady=5)
-            
+            if valor == "C":
+                btn.grid(row=row, column=col, padx=5, pady=5, columnspan=5)
+            if valor == "=":
+                btn.grid(row=row, column=col, padx=5, pady=5, columnspan=3)
+            else:
+                btn.grid(row=row, column=col, padx=5, pady=5)
 
     def criarBotao(self, valor):
         botao = Button(self.numeros_Frame, text=valor, width=5, height=2)
@@ -54,14 +59,30 @@ class App:
         self.ecra['text'] = self.texto
 
     def calcular(self, event):
-        calculo = self.ecra['text']
-        if any(op in calculo for op in ['/', '*', '+', '-']):
-            calculado = eval(calculo)
-            self.ecra['text'] = str(calculado)
+        for char in self.ecra['text']:
+            if char == "X":
+                self.ecra['text'] = self.ecra['text'].replace("X", "*")
+            elif char == "%":
+                self.ecra['text'] = self.ecra['text'].replace("%", "/100")
+            elif char == "√":
+                i = self.ecra['text'].index("√")
+                j = i + 1
+                while j < len(self.ecra['text']) and (self.ecra['text'][j].isdigit() or self.ecra['text'][j] == '.'):
+                    j += 1
+                numero = self.ecra['text'][i+1:j]
+                self.ecra['text'] = self.ecra['text'][:i] + f"math.sqrt({numero})" + self.ecra['text'][j:]
+        try:
+            resultado = eval(self.ecra['text'], {"__builtins__": None}, {"math": math})
+            self.ecra['text'] = str(resultado)
+        except Exception as e:
+            self.ecra['text'] = "Erro"
+            print(f"Erro ao calcular: {e}")
 
-root = Tk()
-App(root)
-root.mainloop()
+
+Calculadora = Tk()
+Calculadora.title("Calculadora")
+CalculadoraTk(Calculadora)
+Calculadora.mainloop()
 
 
 
