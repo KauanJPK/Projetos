@@ -1,5 +1,6 @@
 from tkinter import *
 import math
+import re
 
 
 class CalculadoraTk:
@@ -22,7 +23,7 @@ class CalculadoraTk:
             "4", "5", "6",
             "7", "8", "9",
             "0", "/","X",
-            "+", "-","%",
+            "+", "-","(",")","%",
             "√", "=", "C",
         ]
         for i, valor in enumerate(botoes):
@@ -63,16 +64,32 @@ class CalculadoraTk:
             if char == "X":
                 self.ecra['text'] = self.ecra['text'].replace("X", "*")
             elif char == "%":
-                self.ecra['text'] = self.ecra['text'].replace("%", "/100")
-            elif char == "√":
-                i = self.ecra['text'].index("√")
-                j = i + 1
-                while j < len(self.ecra['text']) and (self.ecra['text'][j].isdigit() or self.ecra['text'][j] == '.'):
-                    j += 1
-                numero = self.ecra['text'][i+1:j]
-                self.ecra['text'] = self.ecra['text'][:i] + f"math.sqrt({numero})" + self.ecra['text'][j:]
+                porcentagem = self.ecra['text'].replace("%", "*/100*")
+                self.ecra['text'] = str(eval(porcentagem))
+
         try:
             resultado = eval(self.ecra['text'], {"__builtins__": None}, {"math": math})
+            self.ecra['text'] = str(resultado)
+        except Exception as e:
+            self.ecra['text'] = "Erro"
+            print(f"Erro ao calcular: {e}")
+
+    padrao = re.compile(r'((?:\d+\.?\d*|\([^()]*\))?)√(\([^()]*\)|\d+\.?\d*)')
+
+    def substituir_raiz(self, match):
+        multiplicador = match.group(1)
+        radicando = match.group(2)
+        if not multiplicador:
+            multiplicador = '1'
+        return f'({multiplicador}*({radicando}**0.5))'
+
+    def calcular(self, event):
+        texto = self.ecra['text']
+        texto = texto.replace("X", "*")
+        texto = texto.replace("%", "*/100*")
+        texto = self.padrao.sub(self.substituir_raiz, texto)
+        try:
+            resultado = eval(texto, {"__builtins__": None}, {"math": math})
             self.ecra['text'] = str(resultado)
         except Exception as e:
             self.ecra['text'] = "Erro"
