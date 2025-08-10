@@ -3841,7 +3841,7 @@
  [],
  False,
  False,
- 1754696523,
+ 1754844615,
  [('runw.exe',
    'C:\\Users\\kaute\\OneDrive\\Documentos\\Projetos\\Calculadora Python '
    'Tkinter\\calculadora_python_tkinter\\Lib\\site-packages\\PyInstaller\\bootloader\\Windows-64bit-intel\\runw.exe',
