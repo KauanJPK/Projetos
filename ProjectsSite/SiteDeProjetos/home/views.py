@@ -28,7 +28,7 @@ def entrada(request):
 
         #Retorno do template do website
 
-    return render(request, 'entrada.html', {
+    return render(request,'entrada.html', {
         'quote': response.text,
         'author': author
     })
